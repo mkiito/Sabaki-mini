@@ -1,0 +1,11 @@
+{
+  "name": "sabaki-mini",
+  "version": "0.1.0",
+  "description": "SGF editor for Go, in the spirit of Sabaki, as an installable mobile-first web app (PWA).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "serve": "node tools/serve.js"
+  }
+}
