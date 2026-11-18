@@ -1,0 +1,33 @@
+name: probe
+on:
+  push:
+    branches: [probe-ci]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Probe network and tools
+        run: |
+          mkdir -p out
+          {
+            echo "node $(node -v) npm $(npm -v)"
+            echo "preact on npm: $(npm view preact version 2>&1)"
+            echo "java: $(java -version 2>&1 | head -1)"
+            echo "android sdk: ${ANDROID_HOME:-none}"
+            echo "done"
+          } > out/probe.log 2>&1 || true
+          cat out/probe.log
+      - name: Publish log to ci-logs branch
+        run: |
+          cd out
+          git init -q
+          git checkout -q -b ci-logs
+          git add probe.log
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -q -m "probe log"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-logs
